@@ -1,4 +1,4 @@
-grammar Eduflow;
+grammar EduFlow;
 
 program: statement+ EOF;
 
