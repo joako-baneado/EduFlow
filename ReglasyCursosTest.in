@@ -1,0 +1,32 @@
+define rule REQUIERE_NIVEL_AVANZADO {
+    require student.credits_completed >= 150;
+}
+
+define course CS101 {
+    set department = "Ciencias de la Computación";
+    set level = 100;
+    set credits = 4;
+    set capacity = 200;
+    set prerequisites = (); // Sin prerrequisitos
+    set schedule = { MON: 08:00-10:00, WED: 08:00-10:00 };
+}
+
+define course CS450 {
+    set department = "Ciencias de la Computación";
+    set level = 400;
+    set credits = 5;
+    set capacity = 40;
+    set prerequisites = (CS101);
+    set schedule = { TUE: 14:00-16:00, THU: 14:00-16:00 };
+}
+
+define course TESIS01 {
+    set department = "Ciencias de la Computación";
+    set level = 500;
+    set credits = 6;
+    set capacity = 15;
+    set prerequisites = (CS450);
+    set eligibility = REQUIERE_NIVEL_AVANZADO;
+    set schedule = { FRI: 10:00-13:00 };
+    set alternatives = [PROYECTO01];
+}
