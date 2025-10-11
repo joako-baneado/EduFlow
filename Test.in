@@ -1,1 +1,62 @@
-// Agregar el test
+define rule REQUIERE_NIVEL_AVANZADO {
+    require student.credits_completed >= 150;
+}
+
+define course CS101 {
+    set department = "Ciencias de la Computación";
+    set level = 100;
+    set credits = 4;
+    set capacity = 200;
+    set prerequisites = (); // Sin prerrequisitos
+    set schedule = { MON: 08:00-10:00, WED: 08:00-10:00 };
+}
+
+define course CS450 {
+    set department = "Ciencias de la Computación";
+    set level = 400;
+    set credits = 5;
+    set capacity = 40;
+    set prerequisites = (CS101);
+    set schedule = { TUE: 14:00-16:00, THU: 14:00-16:00 };
+}
+
+define course TESIS01 {
+    set department = "Ciencias de la Computación";
+    set level = 500;
+    set credits = 6;
+    set capacity = 15;
+    set prerequisites = (CS450);
+    set eligibility = REQUIERE_NIVEL_AVANZADO;
+    set schedule = { FRI: 10:00-13:00 };
+    set alternatives = [PROYECTO01];
+}
+
+define workflow MATRICULA_CS_2025 {
+    stage "Inscripción Cursos Obligatorios (Nivel < 500)" {
+        set max_credits = 18;
+        set allow = courses where course.department == "Ciencias de la Computación" AND course.level < 500;
+    }
+    stage "Inscripción Cursos de Tesis (Nivel >= 500)" {
+        set max_credits = 6;
+        set allow = courses where course.level >= 500;
+        set enforce = [REQUIERE_NIVEL_AVANZADO];
+    }
+}
+
+simulate "Prueba de inscripción exitosa para estudiante de último año" using MATRICULA_CS_2025 {
+    for student {
+        set id = "u20221A345";
+        set major = "Ciencias de la Computación";
+        set credits_completed = 160;
+    }
+    attempt enroll in [CS450, TESIS01];
+}
+
+simulate "Prueba de inscripción fallida por regla de elegibilidad" using MATRICULA_CS_2025 {
+    for student {
+        set id = "u20231B890";
+        set major = "Ciencias de la Computación";
+        set credits_completed = 120; // No cumple los 150 créditos requeridos.
+    }
+    attempt enroll in [TESIS01];
+}
