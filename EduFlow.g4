@@ -1,8 +1,10 @@
 grammar Eduflow;
 
 program: statement+ EOF;
+
 statement:
       definition
+    | execution
     ;
 
 definition:
@@ -11,12 +13,17 @@ definition:
     | workflowDef
     ;
 
+execution:
+    simulationDef
+    ;
+
 
 courseDef:
     'define' 'course' ID '{'
         courseCommand*
     '}'
     ;
+
 courseCommand:
     'set' ( 'credits' '=' INT
           | 'capacity' '=' INT
@@ -28,21 +35,25 @@ courseCommand:
           | 'alternatives' '=' idList
           ) ';'
     ;
+
 ruleDef:
     'define' 'rule' ID '{'
         'require' expression ';'
     '}'
     ;
+
 workflowDef:
     'define' 'workflow' ID '{'
         stageDef+
     '}'
     ;
+
 stageDef:
     'stage' STRING '{'
         stageCommand*
     '}'
     ;
+
 stageCommand:
     'set' ( 'max_credits' '=' INT
           | 'allow' '=' 'courses' 'where' expression
@@ -50,12 +61,42 @@ stageCommand:
           ) ';'
     ;
 
+
+simulationDef:
+    'simulate' STRING 'using' ID '{'
+        studentDef
+        enrollmentDef
+    '}'
+    ;
+
+studentDef:
+    'for' 'student' '{'
+        studentProperty*
+    '}'
+    ;
+
+studentProperty:
+    'set' ( 'id' '=' STRING
+          | 'major' '=' STRING
+          | 'credits_completed' '=' INT
+          ) ';'
+    ;
+
+enrollmentDef:
+    'attempt' 'enroll' 'in' idList ';'
+    ;
+
+
 scheduleBlock: '{' session (',' session)* '}';
 session: DAY ':' TIME '-' TIME;
 idList: '[' (ID (',' ID)*)? ']';
+
 expression: term (LOGICAL_OP term)*;
+
 term: ID | ATTR_ID OPERATOR value | '(' expression? ')';
+
 value: STRING | INT | FLOAT;
+
 
 DEFINE: 'define';
 COURSE: 'course';
