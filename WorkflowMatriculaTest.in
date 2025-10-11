@@ -1,0 +1,11 @@
+define workflow MATRICULA_CS_2025 {
+    stage "Inscripción Cursos Obligatorios (Nivel < 500)" {
+        set max_credits = 18;
+        set allow = courses where course.department == "Ciencias de la Computación" AND course.level < 500;
+    }
+    stage "Inscripción Cursos de Tesis (Nivel >= 500)" {
+        set max_credits = 6;
+        set allow = courses where course.level >= 500;
+        set enforce = [REQUIERE_NIVEL_AVANZADO];
+    }
+}
