@@ -1,0 +1,17 @@
+simulate "Prueba de inscripción exitosa para estudiante de último año" using MATRICULA_CS_2025 {
+    for student {
+        set id = "u20221A345";
+        set major = "Ciencias de la Computación";
+        set credits_completed = 160;
+    }
+    attempt enroll in [CS450, TESIS01];
+}
+
+simulate "Prueba de inscripción fallida por regla de elegibilidad" using MATRICULA_CS_2025 {
+    for student {
+        set id = "u20231B890";
+        set major = "Ciencias de la Computación";
+        set credits_completed = 120; // No cumple los 150 créditos requeridos.
+    }
+    attempt enroll in [TESIS01];
+}
