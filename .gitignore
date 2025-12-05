@@ -22,8 +22,11 @@ Thumbs.db
 *.o
 *.a
 *.so
+*.jar
 eduflow
 
 # ANTLR generated files
 *.interp
 *.tokens
+antlr-4.13.2-complete.jar
+CMakeLists.txt
