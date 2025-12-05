@@ -59,8 +59,7 @@ struct RuleDef : public ASTNode {
 // --- NUEVO: Estructura de Stages ---
 struct StageDef : public ASTNode {
     std::string name;
-    int max_credits = 999; // Default alto
-    // Aquí podrías agregar 'allow' expression en el futuro
+    int max_credits = 999;
     void print(int indent = 0) const override {
         std::string pad(indent, ' ');
         std::cout << pad << "Stage: " << name << " (Max Credits: " << max_credits << ")\n";

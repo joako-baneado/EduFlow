@@ -12,8 +12,6 @@ public:
     EduFlowCompiler();
     void compile(const Program& program);
     void dumpIR();
-    
-    // Ahora recibe el programa para leer las simulaciones del AST
     void executeJIT(const Program& program); 
 
 private:

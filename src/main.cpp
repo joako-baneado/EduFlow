@@ -3,8 +3,7 @@
 #include "antlr4-runtime.h"
 #include "EduFlowLexer.h"
 #include "EduFlowParser.h"
-#include "visitor/ASTBuildVisitor.h"
-#include "codegen/EduFlowCompiler.h"
+#include "EduFlowDriver.h"
 
 using namespace antlr4;
 
@@ -16,7 +15,10 @@ int main(int argc, const char* argv[]) {
 
     std::ifstream stream;
     stream.open(argv[1]);
-    if (!stream.is_open()) return 1;
+    if (!stream.is_open()) {
+        std::cerr << "Error abriendo archivo: " << argv[1] << std::endl;
+        return 1;
+    }
 
     ANTLRInputStream input(stream);
     EduFlowLexer lexer(&input);
@@ -24,19 +26,13 @@ int main(int argc, const char* argv[]) {
     EduFlowParser parser(&tokens);
     EduFlowParser::ProgramContext* tree = parser.program();
 
-    ASTBuildVisitor visitor;
-    visitor.visitProgram(tree);
-    
-    std::cout << "--- AST Construido ---" << std::endl;
-    visitor.rootProgram->print();
+    EduFlowDriver driver;
+    driver.visitProgram(tree);
 
-    std::cout << "\n--- Generando LLVM IR ---" << std::endl;
-    EduFlowCompiler compiler;
-    compiler.compile(*visitor.rootProgram);
-    compiler.dumpIR();
+    std::cout << "\n--- LLVM IR Generado ---" << std::endl;
+    driver.dumpIR();
 
-    // Pasamos el programa completo para leer las simulaciones
-    compiler.executeJIT(*visitor.rootProgram);
+    driver.executeSimulations();
 
     return 0;
 }
