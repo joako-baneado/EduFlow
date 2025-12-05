@@ -1,0 +1,10 @@
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/intrinsics_gen.dir
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/vt_gen.dir
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/omp_gen.dir
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/acc_gen.dir
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/ARMTargetParserTableGen.dir
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/AArch64TargetParserTableGen.dir
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/RISCVTargetParserTableGen.dir
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/eduflow.dir
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/User/Documents/GitHub/EduFlow/build/CMakeFiles/rebuild_cache.dir
