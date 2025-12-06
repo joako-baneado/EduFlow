@@ -1,0 +1,36 @@
+course INTRO_CS credits=4 level=100
+course DATA_STRUCT credits=4 level=200 eligibility=REQ_INTRO
+course ALGORITHMS credits=4 level=300 eligibility=REQ_DS
+
+rule REQ_INTRO check student.credits_completed >= 20
+rule REQ_DS    check student.credits_completed >= 40
+
+workflow CS_DEGREE {
+    stage "Year 1" {
+        max_credits=22
+    }
+    stage "Year 2" {
+        max_credits=22
+    }
+}
+
+# Estudiante que apenas cumple requisitos
+simulation "Estudiante Justo" using CS_DEGREE {
+    student {
+        id="uStudentOk"
+        credits_completed=40
+    }
+    enroll [INTRO_CS, DATA_STRUCT, ALGORITHMS]
+    # ALGORITHMS requiere 40 -> OK
+}
+
+# Estudiante que falla por poco
+simulation "Estudiante Falla" using CS_DEGREE {
+    student {
+        id="uStudentFail"
+        credits_completed=39
+    }
+    enroll [INTRO_CS, ALGORITHMS]
+    # ALGORITHMS requiere 40 -> FAIL
+    # INTRO requiere 20 -> OK
+}

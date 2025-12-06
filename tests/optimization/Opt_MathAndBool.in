@@ -1,0 +1,37 @@
+course MATH101 credits=4 level=100
+course PHYS101 credits=4 level=100
+
+# Esta regla tiene operaciones matemáticas constantes que LLVM debe pre-calcular
+# 10 + 20 * 3 = 70. 
+# student.credits_completed > 70
+rule CHECK_MATH check student.credits_completed > (10 + 20 * 3)
+
+# Esta regla tiene operaciones booleanas redundantes
+# (1 == 1) es true. true OR algo es true? No, esperamos simplificación lógica.
+# student.credits_completed > 50 AND (100 == 100)
+# Deberia quedar en: student.credits_completed > 50
+rule CHECK_BOOL check student.credits_completed > 50 AND (100 == 100)
+
+workflow OPTIMIZATION_FLOW {
+    stage "Stage 1" {
+        max_credits=20
+    }
+}
+
+simulation "Simulacion Optimizacion Constante" using OPTIMIZATION_FLOW {
+    student {
+        id="u2021_MATH_FAIL"
+        credits_completed=60 
+        # 60 > 70 es False. MATH101 debería fallar.
+    }
+    enroll [MATH101]
+}
+
+simulation "Simulacion Optimizacion Booleana" using OPTIMIZATION_FLOW {
+    student {
+        id="u2021_BOOL_PASS"
+        credits_completed=60
+        # 60 > 50 es True. PHYS101 debería pasar.
+    }
+    enroll [PHYS101]
+}
