@@ -1,0 +1,25 @@
+define course MATEMATICA {
+set credits = 4;
+set level = 100;
+}
+
+define course FISICA_AVANZADA {
+set credits = 7;
+set level = 200;
+}
+
+define workflow FLUJO_INGENIERIA {
+stage "Ciclo Regular" {
+set max_credits = 10;
+}
+}
+
+simulate "Prueba de Limite de Creditos" using FLUJO_INGENIERIA {
+for student {
+set id = "u2024_LIMIT_TEST";
+set credits_completed = 50;
+}
+// MATEMATICA (4) + FISICA (7) = 11 créditos.
+// El límite es 10. Física debería ser RECHAZADA.
+attempt enroll in [MATEMATICA, FISICA_AVANZADA];
+}

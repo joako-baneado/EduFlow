@@ -1,0 +1,31 @@
+# CMake
+build/
+cmake-build-debug/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated binaries
+*.exe
+*.o
+*.a
+*.so
+*.jar
+eduflow
+
+# ANTLR generated files
+*.interp
+*.tokens
+antlr-4.13.2-complete.jar
