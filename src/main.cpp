@@ -3,7 +3,8 @@
 #include "antlr4-runtime.h"
 #include "EduFlowLexer.h"
 #include "EduFlowParser.h"
-#include "EduFlowDriver.h"
+#include "visitor/ASTBuildVisitor.h"
+#include "codegen/EduFlowCompiler.h"
 
 using namespace antlr4;
 
@@ -20,19 +21,42 @@ int main(int argc, const char* argv[]) {
         return 1;
     }
 
+    std::cout << "--- 1. Parsing ---" << std::endl;
     ANTLRInputStream input(stream);
     EduFlowLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
     EduFlowParser parser(&tokens);
     EduFlowParser::ProgramContext* tree = parser.program();
 
-    EduFlowDriver driver;
-    driver.visitProgram(tree);
+    std::cout << "--- 2. AST Construction ---" << std::endl;
+    ASTBuildVisitor visitor;
+    visitor.visitProgram(tree);
+    
+    // Verificamos si se construyó algo
+    if (visitor.rootProgram->courses.empty() && 
+        visitor.rootProgram->rules.empty() && 
+        visitor.rootProgram->workflows.empty() && 
+        visitor.rootProgram->simulations.empty()) {
+        std::cerr << "Advertencia: El AST parece vacio." << std::endl;
+    } else {
+        visitor.rootProgram->print();
+    }
 
-    std::cout << "\n--- LLVM IR Generado ---" << std::endl;
-    driver.dumpIR();
+    std::cout << "\n--- 3. LLVM Compilation & Optimization ---" << std::endl;
+    EduFlowCompiler compiler;
+    compiler.compile(*visitor.rootProgram);
+    
+    std::cout << "\n[DEBUG] LLVM IR (Pre-Optimization) " << std::endl;
+    compiler.dumpIR(); // Ver IR sucio
 
-    driver.executeSimulations();
+    // AQUÍ OCURRE LA MAGIA DE LA OPTIMIZACIÓN
+    compiler.optimize(); 
+
+    std::cout << "\n--- 4. LLVM IR Dump (Optimized) ---" << std::endl;
+    compiler.dumpIR();
+
+    std::cout << "\n--- 5. JIT Execution (Hito 3) ---" << std::endl;
+    compiler.executeJIT(*visitor.rootProgram);
 
     return 0;
 }

@@ -56,7 +56,6 @@ struct RuleDef : public ASTNode {
     }
 };
 
-// --- NUEVO: Estructura de Stages ---
 struct StageDef : public ASTNode {
     std::string name;
     int max_credits = 999;
@@ -85,7 +84,7 @@ struct StudentDef : public ASTNode {
 
 struct SimulationDef : public ASTNode {
     std::string name;
-    std::string workflowId; // <--- NUEVO: ID del workflow a usar
+    std::string workflowId;
     std::unique_ptr<StudentDef> student;
     std::vector<std::string> coursesToEnroll;
 
@@ -107,7 +106,6 @@ struct Program : public ASTNode {
         return (it != courses.end()) ? it->get() : nullptr;
     }
 
-    // Helper para buscar workflow
     const WorkflowDef* findWorkflow(const std::string& id) const {
         auto it = std::find_if(workflows.begin(), workflows.end(), [&](const auto& w){ return w->id == id; });
         return (it != workflows.end()) ? it->get() : nullptr;

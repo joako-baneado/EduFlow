@@ -12,7 +12,8 @@ public:
     EduFlowCompiler();
     void compile(const Program& program);
     void dumpIR();
-    void executeJIT(const Program& program); 
+    void executeJIT(const Program& program);
+    void optimize(); 
 
 private:
     std::unique_ptr<llvm::LLVMContext> context;

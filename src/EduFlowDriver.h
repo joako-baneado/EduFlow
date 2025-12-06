@@ -148,7 +148,7 @@ public:
     std::any visitRuleDef(EduFlowParser::RuleDefContext *ctx) override {
         std::string ruleName = ctx->ID()->getText();
         Type* boolType = Type::getInt1Ty(*context);
-        Type* studentPtrType = PointerType::get(getStudentType(), 0);
+        Type* studentPtrType = PointerType::get(getStudentType()->getContext(), 0);
         
         FunctionType* ft = FunctionType::get(boolType, { studentPtrType }, false);
         Function* function = Function::Create(ft, Function::ExternalLinkage, ruleName, module.get());

@@ -69,7 +69,7 @@ void EduFlowCompiler::compileCourse(const CourseDef& course) {
 void EduFlowCompiler::compileRule(const RuleDef& rule) {
     // Firma de la función: bool NombreRegla(Student* s)
     Type* boolType = Type::getInt1Ty(*context);
-    Type* studentPtrType = PointerType::get(getStudentType(), 0);
+    Type* studentPtrType = PointerType::get(getStudentType()->getContext(), 0);
     
     FunctionType* ft = FunctionType::get(boolType, { studentPtrType }, false);
     Function* function = Function::Create(ft, Function::ExternalLinkage, rule.id, module.get());
@@ -128,6 +128,54 @@ llvm::Value* EduFlowCompiler::compileExpression(const ExprNode* expr, llvm::Valu
     }
 
     return ConstantInt::get(Type::getInt32Ty(*context), 0);
+}
+
+#include "llvm/IR/PassManager.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Passes/StandardInstrumentations.h"
+#include "llvm/Transforms/Scalar.h"
+#include "llvm/Transforms/Scalar/GVN.h"
+#include "llvm/Transforms/Scalar/Reassociate.h"
+#include "llvm/Transforms/Scalar/SimplifyCFG.h"
+#include "llvm/Transforms/InstCombine/InstCombine.h"
+#include "llvm/Transforms/Utils/Mem2Reg.h"         
+
+void EduFlowCompiler::optimize() {
+    // 1. Crear los Managers de Análisis y Pasadas
+    LoopAnalysisManager LAM;
+    FunctionAnalysisManager FAM;
+    CGSCCAnalysisManager CGAM;
+    ModuleAnalysisManager MAM;
+
+    PassBuilder PB;
+
+    // 2. Registrar los análisis
+    PB.registerModuleAnalyses(MAM);
+    PB.registerFunctionAnalyses(FAM);
+    PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
+
+    // 3. Crear el Pipeline de optimización de funciones
+    FunctionPassManager FPM;
+    
+    // --- AGREGANDO PASADAS DE OPTIMIZACIÓN ---
+    // InstCombine: Combina instrucciones redundantes (ej: x+0 -> x)
+    FPM.addPass(InstCombinePass());
+    // Reassociate: Reordena expresiones para mejor plegado de constantes
+    FPM.addPass(ReassociatePass());
+    // GVN: Elimina redundancias globales (Global Value Numbering)
+    FPM.addPass(GVNPass());
+    // SimplifyCFG: Limpia el grafo de flujo de control (elimina bloques muertos)
+    FPM.addPass(SimplifyCFGPass());
+    // Mem2Reg: Promueve variables de pila a registros SSA (CRÍTICO para rendimiento)
+    // Nota: LLVM genera mucho 'alloca' que Mem2Reg limpia.
+    // FPM.addPass(PromotePass()); // Si usaras allocas, pero tu codegen ya usa registros virtuales directos mayormente.
+
+    // 4. Ejecutar las optimizaciones sobre todas las funciones del módulo
+    for (auto &F : *module) {
+        if (!F.isDeclaration()) {
+            FPM.run(F, FAM);
+        }
+    }
 }
 
 void EduFlowCompiler::dumpIR() {
