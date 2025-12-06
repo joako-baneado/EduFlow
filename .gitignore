@@ -29,4 +29,3 @@ eduflow
 *.interp
 *.tokens
 antlr-4.13.2-complete.jar
-CMakeLists.txt

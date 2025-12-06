@@ -88,7 +88,7 @@ public:
 
         for (auto cmd : ctx->courseCommand()) {
             if (cmd->getText().find("credits=") != std::string::npos) {
-                c.credits = std::stoi(cmd->INT(0)->getText());
+                c.credits = std::stoi(cmd->INT()->getText());
             } else if (cmd->getText().find("eligibility=") != std::string::npos) {
                 c.eligibilityRule = cmd->ID()->getText();
             }
